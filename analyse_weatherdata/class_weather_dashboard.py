@@ -28,10 +28,6 @@ class WeatherDashboard():
         self.template.main.append(self.row2)
         self.template.show()
 
-        #self.dashboard = pn.serve(self.column1)
-        #self.dashboard = pn.panel(self.column1)
-
-
     def _get_data(self, event):
 
         req_url = f'https://archive-api.open-meteo.com/v1/archive?latitude={self.lat_input.value}' \
@@ -46,9 +42,6 @@ class WeatherDashboard():
         self.wd.calculate_all_time_series(period=120)
         self.wd.extract_all_time_series_components()
 
-        #pn.serve(self.column1)
-        #self.dashboard = pn.panel(self.column1)
-
         self.serve_data()
 
     def serve_data(self):
@@ -59,15 +52,4 @@ class WeatherDashboard():
         weather_pipeline = (idf[select])
         weather_plot = weather_pipeline.hvplot()
 
-        #self.column1[1] = pn.Column(select, weather_plot.panel())
         self.row2[0] = pn.Column(select, weather_plot.panel())
-
-        #self.column1[0] = pn.widgets.TextInput(name='Test', placeholder='Enter test here...')
-
-
-#if __name__ == '__main__':
-    #weather_dashboard = WeatherDashboard()
-    #weather_dashboard.servable()
-    #pn.serve(weather_dashboard)
-    #pn.serve(weather_dashboard.column1)
-

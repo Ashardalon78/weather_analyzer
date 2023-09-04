@@ -1,12 +1,8 @@
-#import datetime
 import requests
 import json
 import pathlib
 import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
-#import panel as pn
-#import matplotlib.pyplot as plt
-
 
 class WeatherData():
     def __init__(self, ini=None):
@@ -66,12 +62,6 @@ class WeatherData():
 
         return result
 
-    #def _get_component_from_time_series(self, time_series: 'DecomposeResult', component: str):
-    #    return getattr(time_series, component)
-
-
-
-
 ####################
 #public wrappers
 ####################
@@ -110,10 +100,6 @@ class WeatherData():
             self.df_monthly = self._transform_daily_to_monthly(self.df_all)
 
     def calculate_all_time_series(self, period: int = 60):
-        #print(period)
         for colname in self.df_monthly.columns:
             time_series = self._decompose_timeseries(colname, period=period)
             self.time_series_analyses[colname] = time_series
-
-
-
