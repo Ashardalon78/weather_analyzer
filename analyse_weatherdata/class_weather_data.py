@@ -25,6 +25,7 @@ class WeatherData():
         return req_url
 
     def _get_data_from_api(self, req_url: str) -> None:
+        print('api_call')
         req = requests.get(url=req_url)
         self.data_collection = req.json()
 
@@ -92,6 +93,8 @@ class WeatherData():
         else:
             self.data_collection = {}
 
+        if 'reason' in self.data_collection.keys(): print(self.data_collection['reason'])
+        #else: print(self.data_collection.keys())
         if 'daily' in self.data_collection.keys():
             #self.data_collection['df_all'] = self._data_collection_to_dataframe()
             self.df_all = self._data_collection_to_dataframe()
