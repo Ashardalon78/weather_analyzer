@@ -5,9 +5,9 @@ import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 class WeatherData():
-    def __init__(self, ini=None):
+    def __init__(self, ini=None, name=None):
         if ini is not None:
-            self.set_data_collection(ini)
+            self.set_data_collection(ini, name=name)
         else:
             self.data_collection = {}
 
@@ -41,9 +41,12 @@ class WeatherData():
         with open (filepath, 'w') as ofile:
             json.dump(self.data_collection, ofile)
 
-    def _generate_outfile_name(self, coordlist: list | tuple) -> pathlib.Path:
-        coordlist = [item.replace('.','-') for item in coordlist]
-        filename = ('json_data/Weather_data' + '_' + '_'.join(coordlist) + '.json')
+    def _generate_outfile_name(self, coordlist: list | tuple, cityname: str = None) -> pathlib.Path:
+        if cityname is None:
+            coordlist = [item.replace('.','-') for item in coordlist]
+            filename = ('json_data/Weather_data' + '_' + '_'.join(coordlist) + '.json')
+        else:
+            filename = ('json_data/Weather_data_' + cityname + '.json')
 
         return pathlib.Path(filename)
 
@@ -78,13 +81,13 @@ class WeatherData():
                 #self.time_series_components[key][comp] = getattr(ts, comp)
                 self.time_series_components[comp][key] = getattr(ts, comp)
 
-    def set_data_collection(self, ini: str | pathlib.Path | list | tuple):
+    def set_data_collection(self, ini: str | pathlib.Path | list | tuple, name: str = None):
         if isinstance(ini, list) or isinstance(ini, tuple):
             if len(ini) == 4:
                 req_url = self._generate_api_url(*ini)
                 self._get_data_from_api(req_url)
 
-                fileout = self._generate_outfile_name(ini)
+                fileout = self._generate_outfile_name(ini, cityname=name)
                 self._save_data_to_json(fileout)
 
         elif isinstance(ini, str) or isinstance(ini, pathlib.Path):
