@@ -4,6 +4,8 @@ import pathlib
 import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
 
+#from data_management.weather_sarima_analysis import WeatherSarimaAnalyser
+
 class WeatherData():
     def __init__(self, ini=None, name=None):
         if ini is not None:
@@ -59,17 +61,16 @@ class WeatherData():
 
         return df_resamp.resample('1M').mean()
 
-    def _decompose_timeseries(self, key: str, period: int = 12) -> 'DecomposeResult':
-        print(f'Calculating time series for {key} with period={period}')
-        series = self.df_monthly[key]
-        result = seasonal_decompose(series, model='additive', period=period)
-
-        return result
-
 ####################
 #public wrappers
 ####################
+    def decompose_timeseries(self, series: pd.Series, period: int = 12) -> 'DecomposeResult':
+        #print(f'Calculating time series for {key} with period={period}')
+        print(f'Calculating time series with period={period}')
+        #series = self.df_monthly[key]
+        result = seasonal_decompose(series, model='additive', period=period)
 
+        return result
     def extract_all_time_series_components(self):
         self.time_series_components = {}
         components = ('observed', 'seasonal', 'trend', 'resid')
@@ -107,5 +108,6 @@ class WeatherData():
 
     def calculate_all_time_series(self, period: int = 60):
         for colname in self.df_monthly.columns:
-            time_series = self._decompose_timeseries(colname, period=period)
+            #time_series = self.decompose_timeseries(colname, period=period)
+            time_series = self.decompose_timeseries(self.df_monthly[colname], period=period)
             self.time_series_analyses[colname] = time_series
