@@ -72,7 +72,7 @@ class WeatherSarimaAnalyser():
     #     with open(filepath, 'r') as ifile:
     #         best_configs = json.load(self.best_configs, ifile)
 
-    def load_best_sarima_config(self, relpath: str):
+    def load_best_sarima_config(self, relpath: str | pathlib.Path):
         #filepath = pathlib.Path(f'best_models/best_sarima_models.json')
         filepath = pathlib.Path(relpath)
         with open(filepath, 'r') as ifile:

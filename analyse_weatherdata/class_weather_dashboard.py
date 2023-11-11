@@ -49,12 +49,14 @@ class WeatherDashboard():
         self.wc.calc_raw_average()
 
         self.wsa = WeatherSarimaAnalyser(self.wc.avg_raw)
-        self.wsa.load_best_sarima_config(f'data_management/best_models/best_sarima_models.json')
+        #self.wsa.load_best_sarima_config(f'data_management/best_models/best_sarima_models.json')
+        self.wsa.load_best_sarima_config(pathlib.Path('data_management')
+                                         .joinpath('best_models').joinpath('best_sarima_models.json'))
 
         self.serve_data()
 
     def _get_cities_dict(self):
-        dir_path = 'data_management\json_data'
+        dir_path = pathlib.Path('data_management').joinpath('json_data')
         self.cities_dict = {}
 
         for file_path in os.listdir(dir_path):
