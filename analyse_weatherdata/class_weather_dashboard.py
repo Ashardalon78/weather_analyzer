@@ -56,8 +56,7 @@ class WeatherDashboard():
             errtxt = f'{type(error)} {error}'
             self.row1[0] = pn.Row(pn.widgets.StaticText(value=errtxt))
 
-
-        self.serve_data()
+        self.serve_data_old()
 
     def _get_cities_dict(self):
         dir_path = pathlib.Path('data_management').joinpath('json_data')
@@ -81,51 +80,39 @@ class WeatherDashboard():
         self.row1[0] = pn.Row(self.dropdown_quantities, button_predict)
 
     def serve_data_old(self):
-        #idf = self.wd.time_series_components['trend'].interactive()
-        #idf = hv.Curve(self.wd.time_series_components['trend'], ['temperature_2m_mean']).opts(width=600, height=400)
-        self.data1_element = hv.Curve(self.wd.time_series_components['trend']['temperature_2m_mean']).opts(width=600, height=400)
-        #print(self.wd.time_series_components['trend'].index)
+        idf = self.wd.time_series_components['trend'].interactive()
 
-        data2_element = hv.Curve(self.wd.time_series_components['trend']['temperature_2m_max'])
+        #data2_element = hv.Curve(self.wd.time_series_components['trend']['temperature_2m_max'])
         #combined_plot = (idf + data2_element).cols(1)
 
         symbols = list(self.wd.time_series_analyses.keys())
         select = pn.widgets.Select(name='Select plot quantity', options=symbols)
 
-        #weather_pipeline = (idf[select])
-        weather_pipeline = self.data1_element #* data2_element
-        #weather_plot = weather_pipeline.hvplot()
-        self.weather_plot = weather_pipeline
+        weather_pipeline = (idf[select])
+        #weather_pipeline = self.data1_element #* data2_element
+        weather_plot = weather_pipeline.hvplot().opts(width=600, height=400)
+        #self.weather_plot = weather_pipeline
 
-        #self.row2[0] = pn.Column(select, weather_plot.panel())
+        self.row2[0] = pn.Column(select, weather_plot.panel())
 
-        button_predict = pn.widgets.Button(name='Predict', button_type='primary')
-        button_predict.on_click(self._get_prediction)
-        self.row1[0] = pn.Column(select, button_predict, self.weather_plot)
+        #button_predict = pn.widgets.Button(name='Predict', button_type='primary')
+        #button_predict.on_click(self._get_prediction)
+        #self.row1[0] = pn.Column(select, button_predict, self.weather_plot)
 
     def _get_prediction(self, event):
-        self.row2[0] = pn.Column(pn.widgets.StaticText(value='1'))
         try:
             model_fit, y_pred, y_forec = self.wsa._sarima_forecast(self.wc.avg_raw[self.dropdown_quantities.value],
                                                             self.wsa.best_configs[self.dropdown_quantities.value])
-            self.row2[0] = pn.Column(pn.widgets.StaticText(value='2'))
             best_pd_fc = pd.concat([y_pred, y_forec])
-            self.row2[0] = pn.Column(pn.widgets.StaticText(value='3'))
             best_dec = self.wd.decompose_timeseries(best_pd_fc, period=60)
-            self.row2[0] = pn.Column(pn.widgets.StaticText(value='4'))
             data2_element = hv.Curve(best_dec.trend)
-            self.row2[0] = pn.Column(pn.widgets.StaticText(value='5'))
+
         except:
-            self.row2[0] = pn.Column(pn.widgets.StaticText(value='6'))
             data2_element = hv.Curve(pd.Series())
-            self.row2[0] = pn.Column(pn.widgets.StaticText(value='7'))
 
         data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value]).opts(
             width=600, height=400)
-        self.row2[0] = pn.Column(pn.widgets.StaticText(value='8'))
 
         weather_pipeline = data1_element * data2_element
-        self.row2[0] = pn.Column(pn.widgets.StaticText(value='9'))
         self.weather_plot = weather_pipeline
-        self.row2[0] = pn.Column(pn.widgets.StaticText(value='10'))
         self.row2[0] = pn.Column(self.weather_plot)
