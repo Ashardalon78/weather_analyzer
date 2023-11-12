@@ -8,7 +8,7 @@ from analyse_weatherdata.class_weather_dashboard import WeatherDashboard
 
 #if __name__ == '__main__':
 weather_dashboard = WeatherDashboard()
-weather_dashboard.template.servable()
+#weather_dashboard.template.servable()
 
     # wd = WeatherData('data_management/json_data/Weather_data_Hargeisa_Somaliland.json')
     # wd.calculate_all_time_series()
