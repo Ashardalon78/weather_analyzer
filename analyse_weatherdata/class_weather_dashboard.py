@@ -38,7 +38,7 @@ class WeatherDashboard():
         #self.template.show()
 
     def _get_data(self, event):
-
+        '''
         #self.wd = WeatherData([self.lat_input.value, self.lon_input.value, '1950-01-01', self.end_date])
         self.wd = WeatherData(self.dropdown_cities.value)
         self.wd.calculate_all_time_series(period=60)
@@ -52,7 +52,7 @@ class WeatherDashboard():
         #self.wsa.load_best_sarima_config(f'data_management/best_models/best_sarima_models.json')
         self.wsa.load_best_sarima_config(pathlib.Path('data_management')
                                          .joinpath('best_models').joinpath('best_sarima_models.json'))
-
+        '''
         self.serve_data()
 
     def _get_cities_dict(self):
@@ -69,12 +69,16 @@ class WeatherDashboard():
                 self.cities_dict[city_country] = full_path
 
     def serve_data(self):
+        '''
         symbols = list(self.wd.time_series_analyses.keys())
         self.dropdown_quantities = pn.widgets.Select(name='Select plot quantity', options=symbols)
 
         button_predict = pn.widgets.Button(name='Predict', button_type='primary')
         button_predict.on_click(self._get_prediction)
         self.row1[0] = pn.Row(self.dropdown_quantities, button_predict)
+        '''
+        testwd = pn.widgets.StaticText(value='Test')
+        self.row1[0] = pn.Row(testwd)
 
     def serve_data_old(self):
         #idf = self.wd.time_series_components['trend'].interactive()
