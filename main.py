@@ -6,8 +6,10 @@ from analyse_weatherdata.class_weather_dashboard import WeatherDashboard
 #from analyse_weatherdata.class_weather_collection import WeatherCollection
 #from data_management.class_sarima_analyser import WeatherSarimaAnalyser
 
-if __name__ == '__main__':
-    weather_dashboard = WeatherDashboard()
+#if __name__ == '__main__':
+weather_dashboard = WeatherDashboard()
+weather_dashboard.template.servable()
+
     # wd = WeatherData('data_management/json_data/Weather_data_Hargeisa_Somaliland.json')
     # wd.calculate_all_time_series()
     #

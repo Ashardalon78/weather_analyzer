@@ -35,7 +35,7 @@ class WeatherDashboard():
         self.template.main.append(self.row1)
         self.row2 = pn.Row(pn.Row())
         self.template.main.append(self.row2)
-        self.template.show()
+        #self.template.show()
 
     def _get_data(self, event):
 
