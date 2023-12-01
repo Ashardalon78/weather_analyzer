@@ -39,12 +39,13 @@ class WeatherDashboard():
 
     def _get_data(self, event):
         #self.wd = WeatherData([self.lat_input.value, self.lon_input.value, '1950-01-01', self.end_date])
-        self.wd = WeatherData(self.dropdown_cities.value)
+        #print('Dropdown', self.dropdown_cities.value)
+        self.wd = WeatherData(self.dropdown_cities.value[0])
         self.wd.calculate_all_time_series(period=60)
         self.wd.extract_all_time_series_components()
 
         self.wc = WeatherCollection()
-        self.wc.append_data(self.dropdown_cities.value)
+        self.wc.append_data(self.dropdown_cities.value[0])
         self.wc.calc_raw_average()
 
         self.wsa = WeatherSarimaAnalyser(self.wc.avg_raw)
@@ -56,10 +57,17 @@ class WeatherDashboard():
             errtxt = f'{type(error)} {error}'
             self.row1[0] = pn.Row(pn.widgets.StaticText(value=errtxt))
 
-        self.serve_data_old()
+        self.wd.load_sarima_forecast_from_disk(self.dropdown_cities.value[1])
+
+        # filepath = pathlib.Path(f'best_models/fitted_models/prediction_{city_country}.json')
+        # with open(filepath, 'w') as ofile:
+        #     json.dump(best_fits, ofile)
+
+        self.serve_data()
 
     def _get_cities_dict(self):
         dir_path = pathlib.Path('data_management').joinpath('json_data')
+        dir_path_forecasts = pathlib.Path('data_management').joinpath('best_models').joinpath('fitted_models')
         self.cities_dict = {}
 
         for file_path in os.listdir(dir_path):
@@ -69,14 +77,17 @@ class WeatherDashboard():
                 city = tmp1[-2]
                 country = tmp1[-1].split('.')[0]
                 city_country = f'{city}_{country}'
-                self.cities_dict[city_country] = full_path
+                #self.cities_dict[city_country] = full_path
+                full_path_forecast = dir_path_forecasts.joinpath(f'prediction_{city_country}.json')
+                self.cities_dict[city_country] = [full_path, full_path_forecast]
 
     def serve_data(self):
         symbols = list(self.wd.time_series_analyses.keys())
         self.dropdown_quantities = pn.widgets.Select(name='Select plot quantity', options=symbols)
 
         button_predict = pn.widgets.Button(name='Predict', button_type='primary')
-        button_predict.on_click(self._get_prediction)
+        #button_predict.on_click(self._get_prediction)
+        button_predict.on_click(self._load_prediction)
         self.row1[0] = pn.Row(self.dropdown_quantities, button_predict)
 
     def serve_data_old(self):
@@ -113,6 +124,19 @@ class WeatherDashboard():
         data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value]).opts(
             width=600, height=400)
 
+        weather_pipeline = data1_element * data2_element
+        self.weather_plot = weather_pipeline
+        self.row2[0] = pn.Column(self.weather_plot)
+
+    def _load_prediction(self, event):
+        data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value].dropna()).opts(
+            width=600, height=400)
+
+        index = self.wd.forecast_collection[self.dropdown_quantities.value]['Time']
+        index = [datetime.datetime.strptime(dt, '%Y-%m-%d') for dt in index]
+        best_dec = pd.Series(self.wd.forecast_collection[self.dropdown_quantities.value]['Values'], index=index)
+        data2_element = hv.Curve(best_dec)
+       
         weather_pipeline = data1_element * data2_element
         self.weather_plot = weather_pipeline
         self.row2[0] = pn.Column(self.weather_plot)

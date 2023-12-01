@@ -43,6 +43,12 @@ class WeatherData():
         with open (filepath, 'w') as ofile:
             json.dump(self.data_collection, ofile)
 
+    def _get_forecast_data_from_json(self, filepath: str | pathlib.Path) -> None:
+        if isinstance(filepath, str):
+            filepath = pathlib.Path(filepath)
+        with open(filepath, 'r') as ifile:
+            self.forecast_collection = json.load(ifile)
+
     def _generate_outfile_name(self, coordlist: list | tuple, cityname: str = None) -> pathlib.Path:
         if cityname is None:
             coordlist = [item.replace('.','-') for item in coordlist]
@@ -111,3 +117,9 @@ class WeatherData():
             #time_series = self.decompose_timeseries(colname, period=period)
             time_series = self.decompose_timeseries(self.df_monthly[colname], period=period)
             self.time_series_analyses[colname] = time_series
+
+    def load_sarima_forecast_from_disk(self, name):
+        #print('Get forecast:', name)
+        self._get_forecast_data_from_json(name)
+        #print(self.forecast_collection['temperature_2m_mean']['Values'])
+        #print(self.time_series_components['trend'])
