@@ -18,7 +18,7 @@ if __name__ == '__main__':
     # wsa = WeatherSarimaAnalyser(wc.avg_raw)
     # wsa.load_best_sarima_config(f'data_management/best_models/best_sarima_models.json')
     #
-    # model_fit, y_pred, y_forec = wsa._sarima_forecast(wc.avg_raw['temperature_2m_mean'],wsa.best_configs['temperature_2m_mean'])
+    # model_fit, y_pred, y_forec = wsa.sarima_forecast(wc.avg_raw['temperature_2m_mean'],wsa.best_configs['temperature_2m_mean'])
     # best_pd_fc = pd.concat([y_pred, y_forec])
     # best_dec = wd.decompose_timeseries(best_pd_fc, period=60)
     #

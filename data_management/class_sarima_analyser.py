@@ -57,7 +57,7 @@ class WeatherSarimaAnalyser():
         #model_configs = [[(0, 1, 0), (0, 0, 0, 12)]]
         return model_configs
 
-    def _sarima_forecast(self, train: pd.Series, cfg: list[list[tuple[int,int,int],tuple[int,int,int,int]]],
+    def sarima_forecast(self, train: pd.Series, cfg: list[list[tuple[int,int,int],tuple[int,int,int,int]]],
                          n_forecast_steps: int = 120) -> 'SARIMAXResultsWrapper, pd.Series, pd.Series':
         order, seasonal_order = cfg
         model = SARIMAX(train, order=order, seasonal_order=seasonal_order)
@@ -87,7 +87,7 @@ class WeatherSarimaAnalyser():
         for cfg in model_configs:
             print(cfg)
             try:
-                model_fit, pred, forec = self._sarima_forecast(data, cfg, n_forecast_steps)
+                model_fit, pred, forec = self.sarima_forecast(data, cfg, n_forecast_steps)
                 # fitted_models.append(model_fit)
                 predictions.append(pred)
                 forecasts.append(forec)

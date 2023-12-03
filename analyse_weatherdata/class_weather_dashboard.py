@@ -101,7 +101,7 @@ class WeatherDashboard():
 
     def _get_prediction(self, event):
         try:
-            model_fit, y_pred, y_forec = self.wsa._sarima_forecast(self.wc.avg_raw[self.dropdown_quantities.value],
+            model_fit, y_pred, y_forec = self.wsa.sarima_forecast(self.wc.avg_raw[self.dropdown_quantities.value],
                                                             self.wsa.best_configs[self.dropdown_quantities.value])
             best_pd_fc = pd.concat([y_pred, y_forec])
             best_dec = self.wd.decompose_timeseries(best_pd_fc, period=60)
