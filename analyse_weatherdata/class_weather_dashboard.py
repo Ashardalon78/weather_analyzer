@@ -79,7 +79,7 @@ class WeatherDashboard():
                 city_country = f'{city}_{country}'
                 #self.cities_dict[city_country] = full_path
                 full_path_forecast = dir_path_forecasts.joinpath(f'prediction_{city_country}.json')
-                self.cities_dict[city_country] = [full_path, full_path_forecast]
+                self.cities_dict[city_country] = [full_path, full_path_forecast, city_country]
 
     def serve_data(self):
         symbols = list(self.wd.time_series_analyses.keys())
@@ -130,7 +130,7 @@ class WeatherDashboard():
 
     def _load_prediction(self, event):
         data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value].dropna()).opts(
-            width=600, height=400)
+            width=600, height=400, title=self.dropdown_cities.value[2])
 
         index = self.wd.forecast_collection[self.dropdown_quantities.value]['Time']
         index = [datetime.datetime.strptime(dt, '%Y-%m-%d') for dt in index]
