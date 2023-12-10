@@ -10,7 +10,7 @@ from analyse_weatherdata.class_weather_data import WeatherData
 from analyse_weatherdata.class_weather_collection import WeatherCollection
 from data_management.class_sarima_analyser import WeatherSarimaAnalyser
 
-pn.extension()
+pn.extension('bokeh')
 
 class WeatherDashboard():
     def __init__(self):
@@ -129,14 +129,16 @@ class WeatherDashboard():
         self.row2[0] = pn.Column(self.weather_plot)
 
     def _load_prediction(self, event):
-        data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value].dropna()).opts(
-            width=600, height=400, title=self.dropdown_cities.value[2])
+        data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value].dropna(),
+                                   label='Data').opts(width=600, height=400, title=self.dropdown_cities.value[2])
+        #data1_element = data1_element.opts(hv.opts.Curve(label='Data'))
 
         index = self.wd.forecast_collection[self.dropdown_quantities.value]['Time']
         index = [datetime.datetime.strptime(dt, '%Y-%m-%d') for dt in index]
         best_dec = pd.Series(self.wd.forecast_collection[self.dropdown_quantities.value]['Values'], index=index)
-        data2_element = hv.Curve(best_dec)
+        data2_element = hv.Curve(best_dec, label='Prediction')
 
         weather_pipeline = data1_element * data2_element
+        weather_pipeline.opts(legend_position='top_left', legend_cols=2, backend='bokeh')
         self.weather_plot = weather_pipeline
         self.row2[0] = pn.Column(self.weather_plot)
