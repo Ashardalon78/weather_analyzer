@@ -40,12 +40,12 @@ class WeatherDashboard():
     def _get_data(self, event):
 
         #self.wd = WeatherData([self.lat_input.value, self.lon_input.value, '1950-01-01', self.end_date])
-        self.wd = WeatherData(self.dropdown_cities.value)
+        self.wd = WeatherData(self.dropdown_cities.value[0])
         self.wd.calculate_all_time_series(period=60)
         self.wd.extract_all_time_series_components()
 
         self.wc = WeatherCollection()
-        self.wc.append_data(self.dropdown_cities.value)
+        self.wc.append_data(self.dropdown_cities.value[0])
         self.wc.calc_raw_average()
 
         self.wsa = WeatherSarimaAnalyser(self.wc.avg_raw)
@@ -66,7 +66,7 @@ class WeatherDashboard():
                 city = tmp1[-2]
                 country = tmp1[-1].split('.')[0]
                 city_country = f'{city}_{country}'
-                self.cities_dict[city_country] = full_path
+                self.cities_dict[city_country] = [full_path, city_country]
 
     def serve_data(self):
         symbols = list(self.wd.time_series_analyses.keys())
@@ -110,7 +110,7 @@ class WeatherDashboard():
             data2_element = hv.Curve(pd.Series())
 
         data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value],
-                                 label='Data').opts(width=600, height=400)
+                                 label='Data').opts(width=600, height=400, title=self.dropdown_cities.value[1])
 
         weather_pipeline = data1_element * data2_element
         weather_pipeline.opts(legend_position='top_left', legend_cols=2, backend='bokeh')
