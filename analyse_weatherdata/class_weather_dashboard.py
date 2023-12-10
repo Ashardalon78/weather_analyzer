@@ -105,13 +105,14 @@ class WeatherDashboard():
                                                             self.wsa.best_configs[self.dropdown_quantities.value])
             best_pd_fc = pd.concat([y_pred, y_forec])
             best_dec = self.wd.decompose_timeseries(best_pd_fc, period=60)
-            data2_element = hv.Curve(best_dec.trend)
+            data2_element = hv.Curve(best_dec.trend, label='Prediction')
         except:
             data2_element = hv.Curve(pd.Series())
 
-        data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value]).opts(
-            width=600, height=400)
+        data1_element = hv.Curve(self.wd.time_series_components['trend'][self.dropdown_quantities.value],
+                                 label='Data').opts(width=600, height=400)
 
         weather_pipeline = data1_element * data2_element
+        weather_pipeline.opts(legend_position='top_left', legend_cols=2, backend='bokeh')
         self.weather_plot = weather_pipeline
         self.row2[0] = pn.Column(self.weather_plot)
